@@ -13,13 +13,16 @@ from models.new_link import NewLink
 
 app = FastAPI()
 
+API_KEY = os.getenv('APIKEY')
+BASE_REDIRECT = os.getenv('BASE_REDIRECT')
+CUSTOM_404 = os.getenv('CUSTOM_404')
+
 @app.post('/new')
 async def new_link(body: NewLink, x_api_key: Optional[str] = Header(None)):
 
-    api_key = os.getenv('APIKEY')
 
-    if api_key:
-        if x_api_key != api_key:
+    if API_KEY:
+        if x_api_key != API_KEY:
             return Response('Unauthorized', 401)
 
     body.id = get_unique_str()
@@ -32,12 +35,11 @@ async def new_link(body: NewLink, x_api_key: Optional[str] = Header(None)):
 
 @app.get('/')
 async def home():
-    base_redirect = os.getenv('BASE_REDIRECT')
-
-    if base_redirect is None:
+    
+    if BASE_REDIRECT is None:
         return Response("Not found.", 404)
     
-    return RedirectResponse(base_redirect, 301)
+    return RedirectResponse(BASE_REDIRECT, 301)
 
 @app.get('/{link_id}')
 async def link(link_id):
@@ -45,11 +47,19 @@ async def link(link_id):
     link_data = get_link(link_id)
 
     if link_data is None:
+        
+        if CUSTOM_404:
+            return RedirectResponse(CUSTOM_404, 301)
+
         return Response('Link not found.', 404)
 
     url = link_data.get('link')
 
     if url is None:
+
+        if CUSTOM_404:
+            return RedirectResponse(CUSTOM_404, 301)
+
         return Response('Link not found.', 404)
 
     return RedirectResponse(url, 302)
