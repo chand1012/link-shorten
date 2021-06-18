@@ -30,6 +30,15 @@ async def new_link(body: NewLink, x_api_key: Optional[str] = Header(None)):
 
     return body
 
+@app.get('/')
+async def home():
+    base_redirect = os.getenv('BASE_REDIRECT')
+
+    if base_redirect is None:
+        return Response("Not found.", 404)
+    
+    return RedirectResponse(base_redirect, 301)
+
 @app.get('/{link_id}')
 async def link(link_id):
 
