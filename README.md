@@ -11,8 +11,7 @@
 
 Requires [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/engine/reference/commandline/compose/).
 
- 1) Copy [`example.env`](/example.env) to `.env`
-    a) Change the variable as you see fit
+ 1) (Optional) Copy [`example.env`](/example.env) to `.env`. Change the variables as you see fit. If you don't require a base redirect nor an API key, you can skip this step.
  2) Run `docker-compose up --build -d`
  3) Use it.
 
