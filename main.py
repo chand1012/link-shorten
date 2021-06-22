@@ -7,15 +7,23 @@ from fastapi import FastAPI
 from fastapi.params import Header
 from starlette.responses import RedirectResponse, Response
 
+from load_cors import load_cors
 from database import get_link, set_link
 from generator import get_unique_str
 from models.new_link import NewLink
 
-app = FastAPI()
-
 API_KEY = os.getenv('APIKEY')
 BASE_REDIRECT = os.getenv('BASE_REDIRECT')
 CUSTOM_404 = os.getenv('CUSTOM_404')
+CORS_CONFIG = os.getenv('CORS_CONFIG')
+
+config = load_cors(CORS_CONFIG)
+
+app = FastAPI()
+
+if config:
+    from fastapi.middleware.cors import CORSMiddleware 
+    app.add_middleware(CORSMiddleware, **config)
 
 @app.post('/new')
 async def new_link(body: NewLink, x_api_key: Optional[str] = Header(None)):
