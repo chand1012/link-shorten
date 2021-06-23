@@ -27,6 +27,8 @@ if config:
 @app.post('/new')
 async def new_link(body: NewLink, x_api_key: Optional[str] = Header(None)):
 
+    if not body.link:
+        return Response('No link given', 400)
 
     if API_KEY:
         if x_api_key != API_KEY:
@@ -66,7 +68,7 @@ async def link(link_id):
 
     url = link_data.get('link')
 
-    if url is None:
+    if not url:
 
         if CUSTOM_404:
             return RedirectResponse(CUSTOM_404, 301)
